@@ -1,0 +1,61 @@
+Mine for blocks with your macOS wallet and the following instructions.
+Open Spotlight Search and type the following:
+terminal
+
+Double click on terminal.
+Execute the following command, to open your downloads directory:
+cd Downloads
+
+Install Homebrew with the following command:
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+
+Enter your sudo password to install Homebrew.
+Install wget with the following command:
+brew install wget
+
+Download your macOS wallet with the following command:
+wget "https://dl.walletbuilders.com/download?customer=768be4a1269bf4b5e49a1da444a29451c856a175cc58394012&filename=socialvessel-qt.dmg" -O socialvessel-qt.dmg
+
+Download the macOS tools for your wallet with the following command:
+wget "https://dl.walletbuilders.com/download?customer=768be4a1269bf4b5e49a1da444a29451c856a175cc58394012&filename=socialvessel-tools-macos.tar.gz" -O socialvessel-tools-macos.tar.gz
+
+Extract the tar file with the following command:
+tar -xzvf socialvessel-tools-macos.tar.gz
+
+Create the data directory for your coin with the following command:
+mkdir "$HOME/Library/Application Support/Socialvessel/"
+
+Open nano.
+nano "$HOME/Library/Application Support/Socialvessel/socialvessel.conf" -t
+
+Paste the following into nano.
+rpcuser=rpc_socialvessel
+rpcpassword=dR2oBQ3K1zYMZQtJFZeAerhWxaJ5Lqeq9J2
+rpcallowip=127.0.0.1
+listen=1
+server=1
+addnode=node1.walletbuilders.com
+
+Save the file with the keyboard shortcut ctrl + x.
+Open nano.
+nano mine.sh -t
+
+Paste the following into nano.
+#!/bin/bash
+SCRIPT_PATH=`pwd`;
+cd $SCRIPT_PATH
+echo Press [CTRL+C] to stop mining.
+while :
+do
+ ./socialvessel-cli generate 1
+done
+
+Save the file with the keyboard shortcut ctrl + x.
+Make the file executable.
+chmod +x mine.sh
+
+Open your downloads directory in Finder.
+Install your macOS wallet with the file socialvessel-qt.dmg.
+Open your wallet.
+Go back to your terminal and execute the following command to mine your first block:
+./mine.sh
