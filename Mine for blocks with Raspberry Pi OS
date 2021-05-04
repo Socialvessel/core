@@ -1,0 +1,92 @@
+Mine for blocks with your Raspberry Pi wallet and the following instructions.
+Click the Terminal app icon in your dock.
+Update your Raspberry Pi with the following command:
+sudo apt-get update && sudo apt-get upgrade -y
+
+Install the required dependencies with the following command:
+sudo apt-get install build-essential libboost-filesystem-dev libboost-program-options-dev libboost-thread-dev libdb-dev libdb++-dev libminiupnpc-dev curl libssl1.0-dev libboost-all-dev qt5-default libqt5gui5 libqt5core5a libqt5dbus5 qttools5-dev qttools5-dev-tools libprotobuf-dev protobuf-compiler libqrencode-dev cmake doxygen unzip -y
+
+Set the environment variable LD_LIBRARY_PATH with the following command:
+export LD_LIBRARY_PATH="/usr/local/lib"
+
+Execute the following command, to open your downloads directory:
+cd Downloads
+
+Install BLS signatures with the following commands:
+cd ~/
+wget https://github.com/codablock/bls-signatures/archive/v20181101.zip
+unzip v20181101.zip
+cd bls-signatures-20181101
+cmake .
+sudo make install
+
+Create your source code directory with the following commands:
+cd ~/Downloads
+mkdir source_code
+cd source_code
+
+Download the source code of your coin with the following command:
+wget "https://dl.walletbuilders.com/download?customer=768be4a1269bf4b5e49a1da444a29451c856a175cc58394012&filename=socialvessel-source.tar.gz" -O socialvessel-source.tar.gz
+
+Type the following command to extract the tar file:
+tar -xzvf socialvessel-source.tar.gz
+
+Build arm-linux-gnueabihf with the following commands:
+PATH=$(echo "$PATH" | sed -e 's/:\/mnt.*//g')
+cd depends
+make HOST=arm-linux-gnueabihf
+cd ..
+
+Type the following commands to compile your wallet for Raspberry Pi.
+./autogen.sh
+CONFIG_SITE=$PWD/depends/arm-linux-gnueabihf/share/config.site ./configure --prefix=/
+make
+
+Type the following command to install the wallet and tools for your coin:
+sudo mv src/qt/socialvessel-qt src/socialvesseld src/socialvessel-cli src/socialvessel-tx /usr/bin/
+
+Create the data directory for your coin with the following command.
+mkdir $HOME/.socialvessel
+
+Open nano.
+nano $HOME/.socialvessel/socialvessel.conf -t
+
+Paste the following into nano.
+rpcuser=rpc_socialvessel
+rpcpassword=dR2oBQ3K1zYMZQtJFZeAerhWxaJ5Lqeq9J2
+rpcallowip=127.0.0.1
+listen=1
+server=1
+addnode=node1.walletbuilders.com
+
+Save the file with the keyboard shortcut ctrl + x.
+Open nano.
+nano ~/Desktop/mine.sh -t
+
+Paste the following into nano.
+#!/bin/bash
+SCRIPT_PATH=`pwd`;
+cd $SCRIPT_PATH
+echo Press [CTRL+C] to stop mining.
+while :
+do
+ socialvessel-cli generate 1
+done
+
+Save the file with the keyboard shortcut ctrl + x.
+Make the file executable.
+chmod +x ~/Desktop/mine.sh
+
+Open nano.
+nano ~/Desktop/Socialvessel-qt.sh -t
+
+Paste the following into nano.
+socialvessel-qt
+
+Save the file with the keyboard shortcut ctrl + x.
+Make the file executable.
+chmod +x ~/Desktop/Socialvessel-qt.sh
+
+Go to the desktop (GUI) of your Raspberry Pi.
+Open the file Socialvessel-qt.sh, press on the button "Execute" to start your wallet.
+Open the file mine.sh and press on the button "Execute in Terminal" to mine your first block.
